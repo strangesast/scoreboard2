@@ -22,8 +22,13 @@ function connect(firstCallback, secondCallback, secondParameters) {
 
 
 function count(callback, data) {
-	var what = data.what;
-	callback(data);
+	get(function(_data) {
+    var response =  [];
+		for(var i=0; i<_data.length; i++) {
+			response[i] = _data[i].length;
+		}
+		callback(response);
+	}, data);
 }
 
 
@@ -49,14 +54,37 @@ function get(callback, data) {
 		if(config.validTypes.indexOf(each.type) == -1) {
 			response[i] = null;
 		} else {
-		  Db.collection(each.type).find(each, buildResponse(i));
+		  Db.collection(each.type).find(each).toArray(buildResponse(i));
 		}
 	}
 }
 
 
 function remove(callback, data) {
-	console.log(data);
+	var what = data.what;
+	var response = [];
+
+	function buildResponse(i) {
+		return function(err, docs) {
+			if(err) {
+				response[i] = err;
+			} else {
+				response[i] = docs;
+			}
+			if(response.indexOf(undefined) == -1 && response.length == what.length) {
+				callback(response);
+			}
+		};
+	}
+
+  for(var i=0; i<what.length; i++) {
+		var each = what[i];
+		if(config.validTypes.indexOf(each.type) == -1) {
+			response[i] = null;
+		} else {
+		  Db.collection(each.type).remove(each, buildResponse(i));
+		}
+	}
 }
 
 
@@ -89,8 +117,6 @@ function add(callback, data) {
 
 var routing = {'count': count, 'get': get, 'remove': remove, 'add': add};
 
-
-
 router.post('/', handle);
 router.get('/', handle);
 
@@ -98,15 +124,10 @@ function handle(req, res) {
 	var data = req.body;
 	var method = routing[data.method];
 
-	// WHY
-	function cb(obj) {
-		res.send(obj);
-	}
-
 	if(method === undefined) {
 		res.send('invalid');
 	} else {
-		connect(method, cb, data);
+		connect(method, function(obj) {res.send(obj);}, data);
 	}
 }
 

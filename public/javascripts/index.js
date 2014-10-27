@@ -6,7 +6,7 @@ var testPlayer = {
 
 function test() {
   var obj = {
-		'method': 'get',
+		'method': 'add',
 		'what' : [testPlayer]
 	};
 	console.log(obj);
