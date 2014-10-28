@@ -1,11 +1,18 @@
 doctype html
 html
   head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="description" content="")
+    meta(name="viewport", content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
+
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="import" href="/elements/elements.html")
 
   block content
 
+  script(src='/javascripts/app.js')
   script(src='/components/jquery/dist/jquery.min.js')
-  block scripts
 
+  block scripts
