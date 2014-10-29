@@ -99,8 +99,7 @@ function add(callback, data) {
 			} else {
 				response[i] = docs;
 			}
-			if(response.indexOf(undefined) == -1 && 
-				 response.length == what.length) {
+			if(response.indexOf(undefined) == -1 && response.length == what.length) {
 				callback(response);
 			}
 		};
